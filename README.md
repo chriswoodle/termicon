@@ -32,7 +32,7 @@ export function UserAvatar({ email }) {
 }
 ```
 
-The component generates the hash asynchronously and inlines the SVG. Configure colors and shape with `palette`, `variant`, `background`, and more — see the [React component](#identicon-react) reference below.
+The component generates the hash asynchronously and inlines the SVG. Configure colors and shape with `palette`, `variant`, `background`, and more — full prop list in the API section below.
 
 ### Vue
 
@@ -47,7 +47,7 @@ defineProps(['email'])
 </template>
 ```
 
-See the [Vue component](#identicon-vue) reference for configurable props.
+Full prop list in the API section below.
 
 ### Svelte
 
@@ -297,7 +297,7 @@ expect(fingerprint(await generate('alice'))).toBe(
 
 ---
 
-### `<Identicon>` (React) {#identicon-react}
+### `<Identicon>` (React)
 
 Imported from `termicon/react`. Renders a `<span role="img" aria-label="…">` with an inline SVG. Generation is async; the first paint is empty until `generate()` resolves (typically the next microtask). Requires React ≥ 19. Listed as an optional `peerDependency`.
 
@@ -324,7 +324,7 @@ The SVG is injected via `dangerouslySetInnerHTML`, which is safe here because th
 
 ---
 
-### `<Identicon>` (Vue) {#identicon-vue}
+### `<Identicon>` (Vue)
 
 Imported from `termicon/vue`. Same structure as the React wrapper. Uses `watchEffect` so the SVG updates reactively when props change. Requires Vue ≥ 3.5. Listed as an optional `peerDependency`.
 
