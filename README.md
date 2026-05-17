@@ -1,10 +1,16 @@
 # termicon
 
+[![npm version](https://img.shields.io/npm/v/termicon.svg)](https://www.npmjs.com/package/termicon)
+[![npm downloads](https://img.shields.io/npm/dm/termicon.svg)](https://www.npmjs.com/package/termicon)
+[![Build](https://github.com/chriswoodle/termicon/actions/workflows/bump.yml/badge.svg)](https://github.com/chriswoodle/termicon/actions/workflows/bump.yml)
+[![types](https://img.shields.io/npm/types/termicon.svg)](https://www.npmjs.com/package/termicon)
+[![license](https://img.shields.io/npm/l/termicon.svg)](./LICENSE)
+
 Identicon library that works with the terminal and browser. Generates deterministic, visually distinct avatars from any string — email address, username, hash, or arbitrary text.
 
-![Terminal output showing identicon rendered in ANSI color blocks](./sample-terminal.png)
+![Terminal output showing identicon rendered in ANSI color blocks](https://raw.githubusercontent.com/chriswoodle/termicon/main/sample-terminal.png)
 
-![Browser output showing identicon rendered as SVG](./sample-browser.png)
+![Browser output showing identicon rendered as SVG](https://raw.githubusercontent.com/chriswoodle/termicon/main/sample-browser.png)
 
 ## Install
 

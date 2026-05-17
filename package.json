@@ -7,6 +7,11 @@
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "sideEffects": false,
+  "packageManager": "yarn@4.14.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "files": [
     "dist",
     "README.md",
@@ -24,8 +29,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/chriswoodle/termicon"
+    "url": "git+https://github.com/chriswoodle/termicon.git"
   },
+  "bugs": {
+    "url": "https://github.com/chriswoodle/termicon/issues"
+  },
+  "homepage": "https://github.com/chriswoodle/termicon#readme",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -51,6 +60,8 @@
   "scripts": {
     "build": "tsc -b -v",
     "test": "vitest run",
+    "ci": "yarn build && yarn test",
+    "prepack": "yarn build",
     "sample": "node --experimental-transform-types scripts/sample.ts"
   },
   "devDependencies": {

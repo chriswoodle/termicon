@@ -1,0 +1,30 @@
+# The `files` field in package.json is the source of truth for what gets
+# published. This .npmignore is a defensive fallback if `files` is ever
+# removed — it excludes everything that shouldn't ship to the registry.
+
+# source & build inputs
+src/
+tests/
+scripts/
+samples/
+tsconfig.json
+tsconfig.tsbuildinfo
+vitest.config.*
+
+# tooling & editor
+.github/
+.vscode/
+.claude/
+.yarn/
+.yarnrc.yml
+.pnp.*
+yarn.lock
+
+# repo docs & assets not needed in the tarball
+sample-browser.png
+sample-terminal.png
+
+# misc
+.gitignore
+.editorconfig
+*.log
