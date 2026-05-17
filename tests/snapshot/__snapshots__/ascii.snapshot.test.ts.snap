@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`toAscii snapshots > alice@example.com 1`] = `
+"##.##
+##.##
+#####
+#####
+#...#"
+`;
+
+exports[`toAscii snapshots > cellWidth: 2 1`] = `
+"..######..
+....##....
+##......##
+..##..##..
+##########"
+`;
+
+exports[`toAscii snapshots > custom onChar and offChar 1`] = `
+"01110
+00100
+10001
+01010
+11111"
+`;
+
+exports[`toAscii snapshots > empty string 1`] = `
+"#.#.#
+#####
+##.##
+.#.#.
+....."
+`;

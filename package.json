@@ -1,0 +1,40 @@
+{
+  "name": "termicon",
+  "version": "1.0.0",
+  "description": "identicon library with cross-environment SVG, Canvas, and ANSI renderers",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./svg": {
+      "types": "./dist/svg.d.ts",
+      "import": "./dist/svg.js"
+    },
+    "./canvas": {
+      "types": "./dist/canvas.d.ts",
+      "import": "./dist/canvas.js"
+    },
+    "./ansi": {
+      "types": "./dist/ansi.d.ts",
+      "import": "./dist/ansi.js"
+    },
+    "./ascii": {
+      "types": "./dist/ascii.d.ts",
+      "import": "./dist/ascii.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b -v",
+    "test": "vitest run",
+    "sample": "node --experimental-transform-types scripts/sample.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}

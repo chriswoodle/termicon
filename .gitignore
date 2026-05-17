@@ -1,0 +1,20 @@
+# build output
+dist/
+tsconfig.tsbuildinfo
+
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# dependencies
+node_modules/
+
+# generated samples / agent output
+samples/
+
+# editor
+.claude/
