@@ -5,6 +5,27 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "identicon",
+    "avatar",
+    "svg",
+    "canvas",
+    "ansi",
+    "terminal",
+    "hash",
+    "icon"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chriswoodle/termicon"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
