@@ -5,9 +5,6 @@ import type { IdenticonResult } from './types.ts'
 
 export interface GenerateOptions {
   size?: 2 | 3 | 5
-  // Mixed into the hash input as `${seed}\0${input}` — lets you produce a stable visual
-  // that's tied to the seed rather than the raw input (e.g., an account ID that may rename).
-  seed?: string
   // Named preset or array of CSS colors. When set, foreground color is picked from the palette
   // using a hash byte for deterministic selection. 'default' uses the hash-derived HSL color.
   palette?: Palette
@@ -78,14 +75,9 @@ function buildResult(hash: Uint8Array, size: 2 | 3 | 5, palette: Palette | undef
   return { grid, color, shape, cssColor }
 }
 
-// Seed is mixed in via NUL separator so `seed=a, input=b` and `seed=ab, input=''` don't collide.
-function withSeed(input: string, seed: string | undefined): string {
-  return seed == null ? input : `${seed}\0${input}`
-}
-
 // Generates a deterministic identicon from an arbitrary Unicode string.
 // Input is hashed with SHA-256; the hash drives the grid, color, and shape.
 export async function generate(input: string, options: GenerateOptions = {}): Promise<IdenticonResult> {
-  const hash = await sha256(withSeed(input, options.seed))
+  const hash = await sha256(input)
   return buildResult(hash, options.size ?? 5, options.palette)
 }

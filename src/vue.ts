@@ -10,7 +10,6 @@ export const Identicon = defineComponent({
   props: {
     value: { type: String, required: true },
     size: { type: Number as PropType<2 | 3 | 5>, default: 5 },
-    seed: { type: String, default: undefined },
     palette: { type: [String, Array] as PropType<Palette>, default: undefined },
     pixelSize: { type: Number, default: 120 },
     padding: { type: Number, default: 1 },
@@ -24,7 +23,7 @@ export const Identicon = defineComponent({
     watchEffect(async (onCleanup) => {
       let cancelled = false
       onCleanup(() => { cancelled = true })
-      const id = await generate(props.value, { size: props.size, seed: props.seed, palette: props.palette })
+      const id = await generate(props.value, { size: props.size, palette: props.palette })
       if (cancelled) return
       const opts = {
         pixelSize: props.pixelSize,

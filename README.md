@@ -131,9 +131,8 @@ Set `tags: false` so blessed doesn't try to interpret the escapes as its own mar
 **General TUI guidance:**
 
 - **Layout math.** A 5×5 identicon with default `cellWidth: 2` occupies **10 columns × 5 rows**. For 3×3 it's 6×3, for 2×2 it's 4×2. Increase `cellWidth` for a chunkier look (3 or 4 is common in TUI dashboards).
-- **Backgrounds.** Pass `transparent: true` to let the host terminal/TUI theme show through, or `background: '#1a1a1a'` (or any hex/`rgb()`/`hsl()`) to match your palette. The default gray (`rgb(240,240,240)`) is tuned for general use and may clash with dark themes.
-- **Truecolor support.** termicon emits SGR `48;2;R;G;B` truecolor escapes — works in iTerm, Windows Terminal, Alacritty, Kitty, WezTerm, and modern xterm. In terminals that lack truecolor, colors degrade to nearest 256-color but the layout stays correct.
-- **Async caveat.** `generate()` is async. In ink, generate in `useEffect`. In imperative TUIs (blessed, react-curse, etc.), `await` before drawing the frame. The hash is fast enough (sub-millisecond for typical inputs) that you usually don't need a loading state.
+- **Backgrounds.** Pass `transparent: true` to let the host terminal/TUI theme show through, or `background: '#1a1a1a'` (or any hex/`rgb()`/`hsl()`) to match your palette.
+- **Truecolor support.** termicon emits SGR `48;2;R;G;B` truecolor escapes — works in iTerm, Windows Terminal, Alacritty, Kitty, WezTerm, and modern xterm. In terminals that lack truecolor, colors degrade to nearest 256-color.
 
 ---
 
@@ -141,7 +140,7 @@ Set `tags: false` so blessed doesn't try to interpret the escapes as its own mar
 
 ### `generate(input, options?)`
 
-Hashes the input with SHA-256 and returns an `IdenticonResult` describing the grid, color, and shape. All renderers take this result as their first argument. Uses native crypto (`crypto.subtle.digest` in browsers, `node:crypto` in Node) — async because Web Crypto's digest API is async-only.
+Hashes the input and returns an `IdenticonResult` describing the grid, color, and shape. All renderers take this result as their first argument.
 
 ```ts
 import { generate } from 'termicon'
@@ -153,7 +152,6 @@ const id = await generate('alice@example.com')
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `size` | `2 \| 3 \| 5` | `5` | Grid dimensions |
-| `seed` | `string` | — | Mixed into the hash. Use when the visual should be stable across input changes (e.g., user renames) |
 | `palette` | `PaletteName \| string[]` | — | Color palette — see [Palettes](#palettes) below |
 
 ---
@@ -175,17 +173,6 @@ Built-in presets: `'default'` (hash-derived HSL), `'pastel'`, `'mono'`, `'vivid'
 
 ---
 
-### `seed`
-
-Decouple the visual from the input string. Useful for stable avatars across account renames or for namespacing (e.g., different palettes per environment without changing inputs).
-
-```ts
-await generate('user-1234', { seed: 'avatar-v2' })
-// Same user-1234 always produces the same avatar; bumping seed to 'avatar-v3' rolls everyone.
-```
-
----
-
 ### `toSvg(id, options?)`
 
 Returns an SVG string of squares.
@@ -201,7 +188,7 @@ Returns an SVG string of squares.
 
 ### `toIconSvg(id, options?)`
 
-Like `toSvg` but renders cells as shapes (circle, diamond, star, hexagon, etc.) instead of squares. The shape is derived from the hash so it is stable per input. Accepts the same options as `toSvg`.
+Like `toSvg` but renders cells as shapes (circle, diamond, star, hexagon, etc.) instead of squares.
 
 ---
 
@@ -285,7 +272,7 @@ console.log(toAscii(id))
 
 ### `fingerprint(id)`
 
-Returns a stable, human-readable string fingerprint of an identicon. Useful for test assertions — encodes the canonical hash-derived properties (grid, color, shape), ignoring rendering choices like palette.
+Returns a stable, human-readable string fingerprint of an identicon. Useful for test assertions.
 
 ```ts
 import { fingerprint, generate } from 'termicon'
@@ -299,8 +286,6 @@ expect(fingerprint(await generate('alice'))).toBe(
 
 ### `<Identicon>` (React)
 
-Imported from `termicon/react`. Renders a `<span role="img" aria-label="…">` with an inline SVG. Generation is async; the first paint is empty until `generate()` resolves (typically the next microtask). Requires React ≥ 19. Listed as an optional `peerDependency`.
-
 ```tsx
 import { Identicon, type IdenticonProps } from 'termicon/react'
 ```
@@ -309,7 +294,6 @@ import { Identicon, type IdenticonProps } from 'termicon/react'
 |------|------|---------|-------------|
 | `value` | `string` | *(required)* | Input string to hash |
 | `size` | `2 \| 3 \| 5` | `5` | Grid dimensions |
-| `seed` | `string` | — | Mixed into the hash, see [`seed`](#seed) |
 | `palette` | `PaletteName \| string[]` | — | Color palette, see [Palettes](#palettes) |
 | `pixelSize` | `number` | `120` | SVG width/height in pixels |
 | `padding` | `number` | `1` | Empty cells around the grid |
@@ -320,13 +304,9 @@ import { Identicon, type IdenticonProps } from 'termicon/react'
 | `className` | `string` | — | Forwarded to the wrapper `<span>` |
 | `style` | `CSSProperties` | — | Forwarded to the wrapper `<span>` |
 
-The SVG is injected via `dangerouslySetInnerHTML`, which is safe here because the markup is built from numeric values — no string interpolation from user input.
-
 ---
 
 ### `<Identicon>` (Vue)
-
-Imported from `termicon/vue`. Same structure as the React wrapper. Uses `watchEffect` so the SVG updates reactively when props change. Requires Vue ≥ 3.5. Listed as an optional `peerDependency`.
 
 ```vue
 <script setup>
@@ -338,7 +318,6 @@ import { Identicon } from 'termicon/vue'
 |------|------|---------|-------------|
 | `value` | `string` | *(required)* | Input string to hash |
 | `size` | `2 \| 3 \| 5` | `5` | Grid dimensions |
-| `seed` | `string` | — | Mixed into the hash |
 | `palette` | `PaletteName \| string[]` | — | Color palette |
 | `pixelSize` | `number` | `120` | SVG width/height in pixels |
 | `padding` | `number` | `1` | Empty cells around the grid |

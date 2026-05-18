@@ -8,7 +8,6 @@ import type { Palette } from './utils/palette.ts'
 export interface IdenticonProps {
   value: string
   size?: 2 | 3 | 5
-  seed?: string
   palette?: Palette
   pixelSize?: number
   padding?: number
@@ -35,11 +34,11 @@ function renderSvg(id: IdenticonResult, props: IdenticonProps): string {
 // React component for rendering an identicon. Generation is async (uses native crypto);
 // the first paint is empty until generate() resolves — typically one microtask later.
 export function Identicon(props: IdenticonProps): ReactElement {
-  const { value, size, seed, palette, className, style, title } = props
+  const { value, size, palette, className, style, title } = props
 
   const generateOptions: GenerateOptions = useMemo(
-    () => ({ size, seed, palette }),
-    [size, seed, palette],
+    () => ({ size, palette }),
+    [size, palette],
   )
 
   const [id, setId] = useState<IdenticonResult | null>(null)

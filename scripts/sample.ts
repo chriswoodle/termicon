@@ -239,7 +239,7 @@ async function main(): Promise<void> {
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
     }
 
@@ -257,7 +257,6 @@ async function main(): Promise<void> {
       position: absolute;
       inset: 0;
       border-radius: var(--radius);
-      border-top: 2px solid rgba(var(--accent), 0.45);
       pointer-events: none;
     }
 

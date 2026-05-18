@@ -86,12 +86,4 @@ describe('<Identicon /> (Vue)', () => {
     await waitForSvg(container)
     expect(container.querySelector('span')!.innerHTML).toContain('fill="#abcdef"')
   })
-
-  it('passes seed through to generate()', async () => {
-    const { container: a } = await mount({ value: 'alice' })
-    await waitForSvg(a)
-    const { container: b } = await mount({ value: 'alice', seed: 'v2' })
-    await waitForSvg(b)
-    expect(a.querySelector('span')!.innerHTML).not.toBe(b.querySelector('span')!.innerHTML)
-  })
 })

@@ -91,14 +91,6 @@ describe('<Identicon /> (React)', () => {
     expect(container.querySelector('span')!.innerHTML).toContain('fill="#ff0000"')
   })
 
-  it('passes seed through to generate()', async () => {
-    const { container: a } = await mount({ value: 'alice' })
-    await waitForSvg(a)
-    const { container: b } = await mount({ value: 'alice', seed: 'v2' })
-    await waitForSvg(b)
-    expect(a.querySelector('span')!.innerHTML).not.toBe(b.querySelector('span')!.innerHTML)
-  })
-
   it('passes palette through to generate()', async () => {
     const { container } = await mount({ value: 'alice', palette: ['#abcdef'] })
     await waitForSvg(container)
