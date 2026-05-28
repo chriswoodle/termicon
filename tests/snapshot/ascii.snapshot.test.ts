@@ -18,4 +18,8 @@ describe('toAscii snapshots', () => {
   it('custom onChar and offChar', async () => {
     expect(toAscii(await generate('hello'), { onChar: '1', offChar: '0' })).toMatchSnapshot()
   })
+
+  it('variant: icons', async () => {
+    expect(toAscii(await generate('alice@example.com'), { variant: 'icons' })).toMatchSnapshot()
+  })
 })

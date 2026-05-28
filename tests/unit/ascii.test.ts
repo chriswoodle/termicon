@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { generate } from '../../src/core.ts'
 import { toAscii } from '../../src/ascii.ts'
+import { SHAPE_GLYPHS, shapeGlyph } from '../../src/shapes.ts'
 
 describe('toAscii', () => {
   it('is exported as a function', () => {
@@ -77,6 +78,42 @@ describe('toAscii', () => {
     const rows = toAscii(id, { onChar: '1', offChar: '0' }).split('\n')
     expect(rows[0]).toBe('10101')
     expect(rows[4]).toBe('00000')
+  })
+
+  describe('variant: icons', () => {
+    it('uses the shape glyph instead of # for on-cells', async () => {
+      const id = await generate('')
+      const glyph = shapeGlyph(id)
+      const output = toAscii(id, { variant: 'icons' })
+      expect(output).toContain(glyph)
+      expect(output).not.toContain('#')
+    })
+
+    it('picks the same glyph index as toIconSvg (shape byte modulo glyph count)', async () => {
+      const id = await generate('alice@example.com')
+      const expected = SHAPE_GLYPHS[id.shape % SHAPE_GLYPHS.length]!
+      expect(toAscii(id, { variant: 'icons' })).toContain(expected)
+    })
+
+    it('renders the correct on/off pattern with glyphs', async () => {
+      const id = await generate('')
+      const glyph = shapeGlyph(id)
+      const rows = toAscii(id, { variant: 'icons' }).split('\n')
+      expect(rows[0]).toBe(`${glyph}.${glyph}.${glyph}`)
+      expect(rows[4]).toBe('.....')
+    })
+
+    it('explicit onChar wins over the variant default glyph', async () => {
+      const id = await generate('hello')
+      const output = toAscii(id, { variant: 'icons', onChar: 'X' })
+      expect(output).toContain('X')
+      expect(output).not.toContain(shapeGlyph(id))
+    })
+
+    it('variant: squares matches the implicit default', async () => {
+      const id = await generate('hello')
+      expect(toAscii(id, { variant: 'squares' })).toBe(toAscii(id))
+    })
   })
 
   it('does not import SVG, Canvas, PNG, or ANSI modules', async () => {

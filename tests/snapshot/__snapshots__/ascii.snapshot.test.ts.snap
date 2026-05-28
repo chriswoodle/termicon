@@ -31,3 +31,11 @@ exports[`toAscii snapshots > empty string 1`] = `
 .#.#.
 ....."
 `;
+
+exports[`toAscii snapshots > variant: icons 1`] = `
+"★★.★★
+★★.★★
+★★★★★
+★★★★★
+★...★"
+`;

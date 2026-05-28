@@ -1,5 +1,5 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
-import { generate } from '../src/index.ts'
+import { generate, shapeGlyph, shapeName } from '../src/index.ts'
 import { toAnsi } from '../src/ansi.ts'
 import { toSvg, toIconSvg } from '../src/svg.ts'
 import { hslToRgb } from '../src/utils/color.ts'
@@ -14,12 +14,9 @@ const SAMPLES = [
   'termicon',
 ]
 
-const SHAPE_NAMES = ['circle', 'diamond', 'triangle-up', 'triangle-down', 'star', 'cross', 'hexagon', 'rounded-square']
-const SHAPE_GLYPHS = ['●', '◆', '▲', '▼', '★', '✚', '⬡', '■']
-
 function toIconAnsi(id: IdenticonResult): string {
-  const { grid, color, shape } = id
-  const glyph = SHAPE_GLYPHS[shape % SHAPE_GLYPHS.length]!
+  const { grid, color } = id
+  const glyph = shapeGlyph(id)
   const [r, g, b] = hslToRgb(color.h, color.s, color.l)
   const fg = `\x1b[38;2;${r};${g};${b}m`
   const dim = '\x1b[2m'
@@ -107,14 +104,14 @@ async function main(): Promise<void> {
       generate(input, { size: 2 }),
     ])
 
-    const shapeName = SHAPE_NAMES[id5.shape % SHAPE_NAMES.length]!
-    const glyph = SHAPE_GLYPHS[id5.shape % SHAPE_GLYPHS.length]!
+    const name = shapeName(id5)
+    const glyph = shapeGlyph(id5)
     const [r, g, b] = hslToRgb(id5.color.h, id5.color.s, id5.color.l)
     const fg = `\x1b[38;2;${r};${g};${b}m`
 
     console.log()
     console.log('  ' + RULE)
-    console.log(`  ${fg}${glyph}${RST}  ${B}"${input}"${RST}  ${DIM}${shapeName}${RST}`)
+    console.log(`  ${fg}${glyph}${RST}  ${B}"${input}"${RST}  ${DIM}${name}${RST}`)
     console.log()
 
     const squaresAnsi  = toAnsi(id5, { cellWidth: 2 })
@@ -150,7 +147,7 @@ async function main(): Promise<void> {
 
     const accentRgb = `${r},${g},${b}`
 
-    cards.push({ input, shapeName, svg5sq, svg5ico, svg5sqT, svg5icoT, svg3, svg2, accentRgb })
+    cards.push({ input, shapeName: name, svg5sq, svg5ico, svg5sqT, svg5icoT, svg3, svg2, accentRgb })
   }
 
   const cardHtml = cards.map(({ input, shapeName, svg5sq, svg5ico, svg5sqT, svg5icoT, svg3, svg2, accentRgb }) => `

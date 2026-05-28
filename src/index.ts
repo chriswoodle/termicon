@@ -1,5 +1,7 @@
 export type { IdenticonResult, HslColor } from './types.ts'
 export type { Palette, PaletteName } from './utils/palette.ts'
 export type { GenerateOptions } from './core.ts'
+export type { ShapeName } from './shapes.ts'
 export { generate } from './core.ts'
 export { fingerprint } from './fingerprint.ts'
+export { SHAPE_NAMES, SHAPE_GLYPHS, shapeIndex, shapeName, shapeGlyph } from './shapes.ts'

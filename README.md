@@ -265,8 +265,18 @@ console.log(toAscii(id))
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `cellWidth` | `number` | `1` | Characters per cell |
-| `onChar` | `string` | `'#'` | Character for on-cells |
+| `onChar` | `string` | `'#'` (or shape glyph when `variant: 'icons'`) | Character for on-cells |
 | `offChar` | `string` | `'.'` | Character for off-cells |
+| `variant` | `'squares' \| 'icons'` | `'squares'` | `'icons'` substitutes the on-cell with the Unicode glyph matching the shape `toIconSvg` would draw (●, ◆, ▲, ▼, ★, ✚, ⬡, ■) |
+
+```ts
+console.log(toAscii(id, { variant: 'icons' }))
+// ●.●.●
+// ●●●●●
+// ●●.●●
+// .●.●.
+// .....
+```
 
 ---
 
