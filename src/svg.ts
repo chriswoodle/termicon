@@ -1,12 +1,10 @@
-import { hslString } from './utils/color.ts'
+import { resolveCss } from './utils/color.ts'
 import { SHAPES, shapeIndex } from './shapes.ts'
 import type { IdenticonResult } from './types.ts'
 
 const DEFAULT_BG = '#f0f0f0'
 
-function foreground(id: IdenticonResult): string {
-  return id.cssColor ?? hslString(id.color.h, id.color.s, id.color.l)
-}
+const foreground = resolveCss
 
 function backgroundRect(pixelSize: number, opts: { transparent?: boolean; background?: string }): string {
   if (opts.transparent) return ''

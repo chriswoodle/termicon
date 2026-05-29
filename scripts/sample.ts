@@ -1,9 +1,8 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { generate, shapeGlyph, shapeName } from '../src/index.ts'
-import { toAnsi } from '../src/ansi.ts'
+import { toAscii } from '../src/ascii.ts'
 import { toSvg, toIconSvg } from '../src/svg.ts'
 import { hslToRgb } from '../src/utils/color.ts'
-import type { IdenticonResult } from '../src/types.ts'
 
 const SAMPLES = [
   'alice',
@@ -13,39 +12,6 @@ const SAMPLES = [
   '0x1a2b3c',
   'termicon',
 ]
-
-function toIconAnsi(id: IdenticonResult): string {
-  const { grid, color } = id
-  const glyph = shapeGlyph(id)
-  const [r, g, b] = hslToRgb(color.h, color.s, color.l)
-  const fg = `\x1b[38;2;${r};${g};${b}m`
-  const dim = '\x1b[2m'
-  const reset = '\x1b[0m'
-  return grid.map(row =>
-    row.map(on => on ? `${fg}${glyph}${reset}` : `${dim}·${reset}`).join(' ')
-  ).join('\n')
-}
-
-function toHalfBlockAnsi(id: IdenticonResult): string {
-  const { grid, color } = id
-  const [r, g, b] = hslToRgb(color.h, color.s, color.l)
-  const colorOn = `\x1b[38;2;${r};${g};${b}m`
-  const colorOff = `\x1b[38;2;240;240;240m`
-  const bgOn = `\x1b[48;2;${r};${g};${b}m`
-  const bgOff = `\x1b[48;2;240;240;240m`
-  const reset = '\x1b[0m'
-  const lines: string[] = []
-  for (let row = 0; row < grid.length; row += 2) {
-    let line = ''
-    for (let col = 0; col < grid[row]!.length; col++) {
-      const top = grid[row]![col]
-      const bottom = row + 1 < grid.length ? grid[row + 1]![col] : 0
-      line += (top ? colorOn : colorOff) + (bottom ? bgOn : bgOff) + '▀'
-    }
-    lines.push(line + reset)
-  }
-  return lines.join('\n')
-}
 
 const B = '\x1b[1m'
 const DIM = '\x1b[2m'
@@ -114,11 +80,11 @@ async function main(): Promise<void> {
     console.log(`  ${fg}${glyph}${RST}  ${B}"${input}"${RST}  ${DIM}${name}${RST}`)
     console.log()
 
-    const squaresAnsi  = toAnsi(id5, { cellWidth: 2 })
-    const squaresAnsiT = toAnsi(id5, { cellWidth: 2, transparent: true })
-    const iconsAnsi    = toIconAnsi(id5)
-    const half3        = toHalfBlockAnsi(id3)
-    const half2        = toHalfBlockAnsi(id2)
+    const squaresAnsi  = toAscii(id5, { style: 'block', cellWidth: 2 })
+    const squaresAnsiT = toAscii(id5, { style: 'block', cellWidth: 2, transparent: true })
+    const iconsAnsi    = toAscii(id5, { variant: 'icons', offChar: '·' })
+    const half3        = toAscii(id3, { style: 'halfblock' })
+    const half2        = toAscii(id2, { style: 'halfblock' })
 
     const mainBlock = sideBySide(
       sideBySide(

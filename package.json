@@ -49,10 +49,6 @@
       "types": "./dist/canvas.d.ts",
       "import": "./dist/canvas.js"
     },
-    "./ansi": {
-      "types": "./dist/ansi.d.ts",
-      "import": "./dist/ansi.js"
-    },
     "./ascii": {
       "types": "./dist/ascii.d.ts",
       "import": "./dist/ascii.js"

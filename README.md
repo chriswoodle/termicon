@@ -84,14 +84,14 @@ document.querySelector('img.avatar').src = toDataUri(id)
 
 ```ts
 import { generate } from 'termicon'
-import { toAnsi } from 'termicon/ansi'
+import { toAscii } from 'termicon/ascii'
 
-toAnsi.write(await generate('alice@example.com'), process.stdout)
+console.log(toAscii(await generate('alice@example.com'), { style: 'block' }))
 ```
 
 ### TUI applications (ink, blessed, etc.)
 
-`toAnsi` returns a string of truecolor ANSI escapes that any terminal-UI library can pass through to stdout. Drop it into whichever "raw text" primitive your TUI exposes — don't wrap it in a styled container, since that fights with the per-cell background escapes termicon emits.
+`toAscii` with `style: 'block'` returns a string of truecolor ANSI escapes that any terminal-UI library can pass through to stdout. Drop it into whichever "raw text" primitive your TUI exposes — don't wrap it in a styled container, since that fights with the per-cell background escapes termicon emits.
 
 **[ink](https://github.com/vadimdemedes/ink)** (React for terminals):
 
@@ -99,14 +99,14 @@ toAnsi.write(await generate('alice@example.com'), process.stdout)
 import React, { useEffect, useState } from 'react'
 import { Text } from 'ink'
 import { generate } from 'termicon'
-import { toAnsi } from 'termicon/ansi'
+import { toAscii } from 'termicon/ascii'
 
 export function Identicon({ value }: { value: string }) {
-  const [ansi, setAnsi] = useState('')
+  const [art, setArt] = useState('')
   useEffect(() => {
-    generate(value).then((id) => setAnsi(toAnsi(id, { transparent: true })))
+    generate(value).then((id) => setArt(toAscii(id, { style: 'block', transparent: true })))
   }, [value])
-  return <Text>{ansi}</Text>
+  return <Text>{art}</Text>
 }
 ```
 
@@ -117,11 +117,11 @@ export function Identicon({ value }: { value: string }) {
 ```ts
 import blessed from 'blessed'
 import { generate } from 'termicon'
-import { toAnsi } from 'termicon/ansi'
+import { toAscii } from 'termicon/ascii'
 
 const screen = blessed.screen()
 const box = blessed.box({ tags: false, width: 12, height: 5, top: 0, left: 0 })
-box.setContent(toAnsi(await generate('alice'), { cellWidth: 2 }))
+box.setContent(toAscii(await generate('alice'), { style: 'block', cellWidth: 2 }))
 screen.append(box)
 screen.render()
 ```
@@ -226,48 +226,40 @@ toCanvas(id, canvas.getContext('2d')!)
 
 ---
 
-### `toAnsi(id, options?)` / `toAnsi.write(id, stream, options?)`
-
-Returns a string with truecolor ANSI escape sequences for display in a terminal. `toAnsi.write` pipes it to a writable stream with a trailing newline.
-
-```ts
-import { toAnsi } from 'termicon/ansi'
-
-console.log(toAnsi(id))
-
-// Or write directly to a stream:
-toAnsi.write(id, process.stdout)
-```
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `cellWidth` | `number` | `2` | Number of space characters per cell |
-| `background` | `string` | — | CSS color (hex, rgb(), or hsl()) for off-cells |
-| `transparent` | `boolean` | `false` | Use the terminal's default background color instead |
-
----
-
 ### `toAscii(id, options?)`
 
-Returns a plain-text string. Useful in environments without color support or for debugging.
+Returns a multi-line string for the terminal. The `style` option selects the technique:
+
+- **`'text'`** (default) — a grid of characters: `#`/`.`, or shape glyphs with `variant: 'icons'`. On-cells are colored with a truecolor ANSI foreground (off-cells dimmed) by default; pass `color: false` for a plain, escape-free string. With `color: false` and `variant: 'squares'` the output is pure ASCII — the fallback for environments without color or Unicode support.
+- **`'block'`** — solid truecolor cells drawn with background-color escapes (two columns per cell by default). The classic "colored blocks" look for CLIs and TUIs.
+- **`'halfblock'`** — the `▀` glyph packs two grid rows into one line (foreground = upper pixel, background = lower pixel), so the icon looks ~square in half the height.
 
 ```ts
 import { toAscii } from 'termicon/ascii'
 
-console.log(toAscii(id))
+console.log(toAscii(id))                         // colored '#'/'.' grid
+console.log(toAscii(id, { color: false }))       // pure ASCII, no escapes
 // #.#.#
 // #####
 // ##.##
 // .#.#.
 // .....
+
+console.log(toAscii(id, { variant: 'icons' }))   // ●.●.● …
+console.log(toAscii(id, { style: 'block' }))     // solid colored blocks
+console.log(toAscii(id, { style: 'halfblock' })) // ▀ half-block, half the height
 ```
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `cellWidth` | `number` | `1` | Characters per cell |
-| `onChar` | `string` | `'#'` (or shape glyph when `variant: 'icons'`) | Character for on-cells |
-| `offChar` | `string` | `'.'` | Character for off-cells |
-| `variant` | `'squares' \| 'icons'` | `'squares'` | `'icons'` substitutes the on-cell with the Unicode glyph matching the shape `toIconSvg` would draw (●, ◆, ▲, ▼, ★, ✚, ⬡, ■) |
+| `style` | `'text' \| 'block' \| 'halfblock'` | `'text'` | Rendering technique (see above) |
+| `cellWidth` | `number` | `1` (`text`) / `2` (`block`) | Columns per cell; ignored by `'halfblock'` |
+| `onChar` | `string` | `'#'` (or shape glyph when `variant: 'icons'`) | On-cell character (`'text'` style) |
+| `offChar` | `string` | `'.'` | Off-cell character (`'text'` style) |
+| `variant` | `'squares' \| 'icons'` | `'squares'` | `'icons'` substitutes the on-cell with the Unicode glyph matching the shape `toIconSvg` would draw (●, ◆, ▲, ▼, ★, ✚, ⬡, ■) — `'text'` style |
+| `color` | `boolean` | `true` | Colorize the `'text'` style with a truecolor ANSI foreground. Set `false` for plain text |
+| `transparent` | `boolean` | `false` | `'block'`/`'halfblock'`: off-cells use the terminal's default background |
+| `background` | `string` | `'#f0f0f0'` | `'block'`/`'halfblock'`: CSS color (hex, rgb(), hsl()) for off-cells |
 
 ```ts
 console.log(toAscii(id, { variant: 'icons' }))

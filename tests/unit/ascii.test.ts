@@ -18,26 +18,38 @@ describe('toAscii', () => {
     expect(toAscii(id).split('\n')).toHaveLength(5)
   })
 
-  it('contains zero ANSI escape codes', async () => {
+  it('applies color (ANSI escapes) by default', async () => {
     const id = await generate('hello')
-    expect(toAscii(id)).not.toMatch(/\x1b\[/)
+    expect(toAscii(id)).toMatch(/\x1b\[/)
   })
 
-  it('uses only # and . characters (plus newlines)', async () => {
+  it('color: false contains zero ANSI escape codes', async () => {
     const id = await generate('hello')
-    expect(toAscii(id)).toMatch(/^[#.\n]+$/)
+    expect(toAscii(id, { color: false })).not.toMatch(/\x1b\[/)
   })
 
-  it('default cellWidth produces 5 chars per row', async () => {
+  it('color: false uses only # and . characters (plus newlines)', async () => {
     const id = await generate('hello')
-    for (const line of toAscii(id).split('\n')) {
+    expect(toAscii(id, { color: false })).toMatch(/^[#.\n]+$/)
+  })
+
+  it('on-cells carry a truecolor foreground sequence, off-cells are dimmed', async () => {
+    const id = await generate('hello')
+    const output = toAscii(id)
+    expect(output).toMatch(/\x1b\[38;2;\d+;\d+;\d+m/)
+    expect(output).toContain('\x1b[2m')
+  })
+
+  it('default cellWidth produces 5 chars per row (ignoring escapes)', async () => {
+    const id = await generate('hello')
+    for (const line of toAscii(id, { color: false }).split('\n')) {
       expect(line).toHaveLength(5)
     }
   })
 
   it('custom cellWidth produces correct character width per row', async () => {
     const id = await generate('hello')
-    for (const line of toAscii(id, { cellWidth: 3 }).split('\n')) {
+    for (const line of toAscii(id, { cellWidth: 3, color: false }).split('\n')) {
       expect(line).toHaveLength(15)
     }
   })
@@ -45,7 +57,7 @@ describe('toAscii', () => {
   it('renders correct on/off pattern for known input', async () => {
     // Empty string grid: [[1,0,1,0,1],[1,1,1,1,1],[1,1,0,1,1],[0,1,0,1,0],[0,0,0,0,0]]
     const id = await generate('')
-    const rows = toAscii(id).split('\n')
+    const rows = toAscii(id, { color: false }).split('\n')
     expect(rows[0]).toBe('#.#.#')
     expect(rows[1]).toBe('#####')
     expect(rows[2]).toBe('##.##')
@@ -75,7 +87,7 @@ describe('toAscii', () => {
 
   it('custom onChar and offChar together', async () => {
     const id = await generate('')
-    const rows = toAscii(id, { onChar: '1', offChar: '0' }).split('\n')
+    const rows = toAscii(id, { onChar: '1', offChar: '0', color: false }).split('\n')
     expect(rows[0]).toBe('10101')
     expect(rows[4]).toBe('00000')
   })
@@ -98,7 +110,7 @@ describe('toAscii', () => {
     it('renders the correct on/off pattern with glyphs', async () => {
       const id = await generate('')
       const glyph = shapeGlyph(id)
-      const rows = toAscii(id, { variant: 'icons' }).split('\n')
+      const rows = toAscii(id, { variant: 'icons', color: false }).split('\n')
       expect(rows[0]).toBe(`${glyph}.${glyph}.${glyph}`)
       expect(rows[4]).toBe('.....')
     })

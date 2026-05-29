@@ -1,3 +1,5 @@
+import type { IdenticonResult } from '../types.ts'
+
 export function hslString(hue: number, saturation: number, lightness: number): string {
   const clampedHue = Number.isFinite(hue) ? Math.min(360, Math.max(0, hue)) : 0
   const clampedSaturation = Number.isFinite(saturation) ? Math.min(100, Math.max(0, saturation)) : 0
@@ -52,4 +54,20 @@ export function parseCssColor(input: string): [number, number, number] | null {
   }
 
   return null
+}
+
+// Resolves an identicon's foreground to an RGB triple: prefer the palette-aware cssColor,
+// falling back to the hash-derived HSL. Shared by the ANSI, ASCII, and half-block renderers.
+export function resolveRgb(identicon: IdenticonResult): [number, number, number] {
+  if (identicon.cssColor) {
+    const parsed = parseCssColor(identicon.cssColor)
+    if (parsed) return parsed
+  }
+  return hslToRgb(identicon.color.h, identicon.color.s, identicon.color.l)
+}
+
+// Resolves an identicon's foreground to a CSS color string: the palette-aware cssColor, or the
+// hash-derived HSL. Shared by the SVG and Canvas renderers.
+export function resolveCss(identicon: IdenticonResult): string {
+  return identicon.cssColor ?? hslString(identicon.color.h, identicon.color.s, identicon.color.l)
 }

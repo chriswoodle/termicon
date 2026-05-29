@@ -22,4 +22,20 @@ describe('toAscii snapshots', () => {
   it('variant: icons', async () => {
     expect(toAscii(await generate('alice@example.com'), { variant: 'icons' })).toMatchSnapshot()
   })
+
+  it('style: block', async () => {
+    expect(toAscii(await generate('alice@example.com'), { style: 'block' })).toMatchSnapshot()
+  })
+
+  it('style: block transparent', async () => {
+    expect(toAscii(await generate('hello'), { style: 'block', transparent: true })).toMatchSnapshot()
+  })
+
+  it('style: halfblock', async () => {
+    expect(toAscii(await generate('alice@example.com'), { style: 'halfblock' })).toMatchSnapshot()
+  })
+
+  it('style: halfblock transparent', async () => {
+    expect(toAscii(await generate('hello'), { style: 'halfblock', transparent: true })).toMatchSnapshot()
+  })
 })

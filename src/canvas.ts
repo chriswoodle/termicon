@@ -1,4 +1,4 @@
-import { hslString } from './utils/color.ts'
+import { resolveCss } from './utils/color.ts'
 import type { IdenticonResult } from './types.ts'
 
 const DEFAULT_PIXEL_SIZE = 120
@@ -24,7 +24,7 @@ export function toCanvas(
   const gridSize = grid.length
   const cellSize = pixelSize / (gridSize + 2 * padding)
   const offset = padding * cellSize
-  const foregroundColor = identicon.cssColor ?? hslString(identicon.color.h, identicon.color.s, identicon.color.l)
+  const foregroundColor = resolveCss(identicon)
 
   if (!options.transparent) {
     ctx.fillStyle = options.background ?? DEFAULT_BG
