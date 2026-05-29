@@ -79,7 +79,8 @@
     "test": "vitest run",
     "ci": "yarn build && yarn test",
     "prepack": "yarn build",
-    "sample": "node --experimental-transform-types scripts/sample.ts"
+    "sample": "node --experimental-transform-types scripts/sample.ts",
+    "sample:tui": "node --experimental-transform-types scripts/sample-tui.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

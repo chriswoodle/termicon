@@ -8,6 +8,8 @@
 
 Identicon library that works with the terminal and browser. Generates deterministic, visually distinct avatars from any string — email address, username, hash, or arbitrary text.
 
+![termicon identicons in a terminal UI: a profile card with an ASCII wordmark, identicon avatar, and menu](https://raw.githubusercontent.com/chriswoodle/termicon/main/sample-tui.png)
+
 ![Terminal output showing identicon rendered in ANSI color blocks](https://raw.githubusercontent.com/chriswoodle/termicon/main/sample-terminal.png)
 
 ![Browser output showing identicon rendered as SVG](https://raw.githubusercontent.com/chriswoodle/termicon/main/sample-browser.png)
