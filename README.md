@@ -156,6 +156,32 @@ const id = await generate('alice@example.com')
 | `size` | `2 \| 3 \| 5` | `5` | Grid dimensions |
 | `palette` | `PaletteName \| string[]` | — | Color palette — see [Palettes](#palettes) below |
 
+The returned `IdenticonResult` exposes the color so you can reuse it elsewhere:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `grid` | `number[][]` | The on/off cell matrix |
+| `color` | `{ h, s, l }` | Hash-derived HSL color (hue 0–360, sat/lightness as percentages) |
+| `cssColor` | `string` | Resolved CSS color string — the exact color the renderers paint with (palette-aware) |
+| `shape` | `number` | Raw byte selecting the icon shape |
+
+#### Reusing the color for accents
+
+`cssColor` is the same value `toSvg`, `toCanvas`, and `toAscii` use to draw the icon, so reading it back gives you an exact match for borders, text, or other accents around the avatar:
+
+```ts
+const id = await generate('alice@example.com')
+
+avatar.innerHTML = toSvg(id)
+avatar.style.borderColor = id.cssColor   // accent matches the icon exactly
+
+// Need RGB or HSL components instead? Use the raw `color`:
+const { h, s, l } = id.color
+nameLabel.style.color = `hsl(${h}, ${s}%, ${l}%)`
+```
+
+Note: when a `palette` is set, `cssColor` is the picked palette entry while `color` remains the hash-derived HSL — use `cssColor` to match what's rendered.
+
 ---
 
 ### Palettes
